@@ -78,12 +78,13 @@ app.post('/submit-form', async (req, res) => {
 });
 
 // Update user route (currently just logs and sends a response)
-app.put('/update-user/:currentName/:currentEmail', async (req, res) => {
+app.put('/update-user/:currentName/:currentEmail/', async (req, res) => {
     try {
-        const { currentName, currentEmail } = req.params;
-        const { newName, newEmail } = req.body;
-        console.log('Current user:', { currentName, currentEmail });
-        console.log('New user data:', { newName, newEmail });
+        const { currentName, currentEmail} = req.params;
+        let { newName, newEmail, newMessage } = req.body;
+
+        // console.log('Current user:', { currentName, currentEmail });
+        console.log('New user data:', { newName, newEmail, newMessage });
         const data = await fs.readFile(dataPath, 'utf8');
         if (data) {
             let users = JSON.parse(data);
@@ -92,18 +93,74 @@ app.put('/update-user/:currentName/:currentEmail', async (req, res) => {
             if (userIndex === -1) {
                 return res.status(404).json({ message: "User not found" })
             }
-            users[userIndex] = { ...users[userIndex], name: newName, email: newEmail };
+            console.log('current name is:' + currentName)
+            console.log('new name is:' + newName)
+            if (newName === "") {
+                newName = currentName;
+            }
+            if (newEmail === "") {
+                newEmail = currentEmail;
+            }
+            const currentMessage = users[userIndex].messages
+            if (newMessage === "") {
+                newMessage = currentMessage
+            }
+            
+            users[userIndex] = { ...users[userIndex], name: newName, email: newEmail, messages: newMessage };
             console.log(users);
             await fs.writeFile(dataPath, JSON.stringify(users, null, 2));
 
-            res.status(200).json({ message: `You sent ${newName} and ${newEmail}` });
+            res.status(200).json({ message: `You sent ${newName}, ${newEmail}, and ${newMessage}` });
         }
     } catch (error) {
         console.error('Error updating user:', error);
         res.status(500).send('An error occurred while updating the user.');
     }
 });
+app.delete('/user/:name/:email', async (req, res) => {
+    try {
+        console.log(req.params)
+        const { name, email } = req.params;
+        console.log(name)
+        console.log(email)
+        // initialize an empty array of 'users'
+        let users = []
+        try {
+            // try to read the user.json file and cache as data
+            const data = await fs.readFile(dataPath, 'utf8')
+            // parse the data
+            users = JSON.parse(data)
+            // cache the userIndex based on a matching name and email
+            const userIndex = users.findIndex(user => user.name === name && user.email === email)
+            console.log(userIndex)
+            if (userIndex === -1) {
+                console.log('user cannot be found')
+            }
+            // splice the users array with the new name and email
+            users.splice(userIndex, 1);
+            console.log(userIndex)
+            console.log(users);
+            // try to write athe users array back to the file
+            try {
+                await fs.writeFile(dataPath, JSON.stringify(users, null, 2))
 
+            } catch (error) {
+                console.error("failed to write to database");
+            }
+
+            // send a success deleted message
+            return res.send('successfully deleted user')
+        } catch (error) {
+            return res.status(404).send('File data not found');
+        }
+
+
+
+
+
+
+    } catch (error) { }
+})
 // Start the server
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {

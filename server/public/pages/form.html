@@ -8,11 +8,11 @@
   <body>
     <h1>Contact Form</h1>
     <form action="/submit-form" method="POST">
-      <label for="name">Name:</label>
-      <input type="text" id="name" name="name" required /><br /><br />
+      <label for="name">SuperHero Name:</label>
+       <input type="text" id="name" name="name" required /><br /><br />
       <label for="email">Email:</label>
       <input type="email" id="email" name="email" required /><br /><br />
-      <label for="message">Message:</label><br />
+      <label for="message">SuperPowers:</label><br />
       <textarea
         id="message"
         name="message"
@@ -25,15 +25,33 @@
     </form>
     <h1>User Management</h1>
     <form id="updateForm">
-      <label for="currentName">Current name:</label>
+      <label for="currentName">Current name *:</label>
       <input type="text" id="currentName" required /><br /><br />
-      <label for="currentEmail">Current email:</label>
+      <label for="currentEmail">Current email *:</label>
       <input type="email" id="currentEmail" required /><br /><br />
       <label for="newName">New name:</label>
-      <input type="text" id="newName" required /><br /><br />
+      <input type="text" id="newName"/><br /><br />
       <label for="newEmail">New email:</label>
-      <input type="email" id="newEmail" required /><br /><br />
+      <input type="email" id="newEmail"/><br /><br />
+      <label for="newMessage">Edit Powers:</label> <br> <br>
+      <textarea
+        id="newMessage"
+        name="message"
+        rows="4"
+        cols="50"
+      ></textarea
+      ><br /><br />
       <button type="submit">Update User</button>
+    </form>
+    <h2>Delete User</h2>
+    <form id="delete-user">
+      <label for="delete-name">name:</label>
+      <input type="text" id="delete-name">
+       <br> <br>
+      <label for="delete-email">email:</label>
+      <input type="text" id="delete-email">
+       <br> <br>
+      <button type="submit">Delete User</button>
     </form>
     <h1>Show Users</h1>
     <table id="usersTable">
@@ -41,6 +59,7 @@
         <tr>
           <th>User Name</th>
           <th>User Email</th>
+          <th>User Message</th>
         </tr>
       </thead>
       <tbody id="userTableBody">
@@ -55,18 +74,19 @@
           const currentName = document.getElementById("currentName").value;
           const currentEmail = document.getElementById("currentEmail").value;
           const newName = document.getElementById("newName").value;
+          const newMessage = document.getElementById("newMessage").value;
           const newEmail = document.getElementById("newEmail").value;
           try {
             const response = await fetch(
-              `/update-user/${currentName}/${currentEmail}`,
+              `/update-user/${currentName}/${currentEmail}/`,
               {
                 method: "PUT",
                 headers: {
                   "Content-Type": "application/json",
                 },
-                body: JSON.stringify({ newName, newEmail }),
+                body: JSON.stringify({ newName, newMessage, newEmail }),
               }
-            );
+              );
             const data = await response.json();
             console.log(data);
             renderUsers();
@@ -75,6 +95,25 @@
             alert("Error updating user: " + error.message);
           }
         });
+        document
+        .getElementById('delete-user')
+        .addEventListener('submit', async (e) => {
+          e.preventDefault();
+          const name = document.getElementById('delete-name').value
+          const email = document.getElementById('delete-email').value
+          try {
+            const response = await fetch(`/user/${name}/${email}`, {
+              method: 'DELETE',
+            });
+            if (!response.ok) {
+              throw new Error('Problem fetching delete endpoint')
+            }
+            const data = await response.text();
+            console.log(data)
+          } catch(error) {
+            console.error("There was a problem, " + error.message)
+          }
+        })
       async function fetchUsers() {
         try {
           const response = await fetch("/users");
@@ -100,7 +139,7 @@
           const users = await fetchUsers();
           if (Array.isArray(users) && users.length > 0) {
             users.forEach((user) => {
-              const row = `<tr><td>${user.name}</td><td>${user.email}</td></tr>`;
+              const row = `<tr><td>${user.name}</td><td>${user.email}</td><td>${user.messages}</td></tr>`;
               tableBody.innerHTML += row;
             });
           }
