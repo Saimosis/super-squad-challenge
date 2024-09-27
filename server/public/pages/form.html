@@ -10,7 +10,7 @@
     <form action="/submit-form" method="POST">
       <label for="name">SuperHero Name:</label>
        <input type="text" id="name" name="name" required /><br /><br />
-      <label for="email">Email:</label>
+      <label for="email">Universe:</label>
       <input type="email" id="email" name="email" required /><br /><br />
       <label for="message">SuperPowers:</label><br />
       <textarea
@@ -23,17 +23,17 @@
       ><br /><br />
       <input type="submit" value="Submit" />
     </form>
-    <h1>User Management</h1>
+    <h1>Update your Hero</h1>
     <form id="updateForm">
       <label for="currentName">Current name *:</label>
       <input type="text" id="currentName" required /><br /><br />
-      <label for="currentEmail">Current email *:</label>
-      <input type="email" id="currentEmail" required /><br /><br />
-      <label for="newName">New name:</label>
+      <label for="currentEmail">Current universe *:</label>
+      <input type="text" id="currentEmail" required /><br /><br />
+      <label for="newName">New name (optional):</label>
       <input type="text" id="newName"/><br /><br />
-      <label for="newEmail">New email:</label>
-      <input type="email" id="newEmail"/><br /><br />
-      <label for="newMessage">Edit Powers:</label> <br> <br>
+      <label for="newEmail">New universe (optional):</label>
+      <input type="text" id="newEmail"/><br /><br />
+      <label for="newMessage">Edit Powers (optional):</label> <br> <br>
       <textarea
         id="newMessage"
         name="message"
@@ -41,25 +41,25 @@
         cols="50"
       ></textarea
       ><br /><br />
-      <button type="submit">Update User</button>
+      <button type="submit">Update Hero</button>
     </form>
-    <h2>Delete User</h2>
+    <h2>Delete Hero</h2>
     <form id="delete-user">
-      <label for="delete-name">name:</label>
+      <label for="delete-name">Name:</label>
       <input type="text" id="delete-name">
        <br> <br>
-      <label for="delete-email">email:</label>
+      <label for="delete-email">Universe:</label>
       <input type="text" id="delete-email">
        <br> <br>
-      <button type="submit">Delete User</button>
+      <button type="submit">Delete Hero</button>
     </form>
-    <h1>Show Users</h1>
+    <h1>Show Heros</h1>
     <table id="usersTable">
       <thead>
         <tr>
-          <th>User Name</th>
-          <th>User Email</th>
-          <th>User Message</th>
+          <th>Hero Name</th>
+          <th>Universe</th>
+          <th>SuperPowers</th>
         </tr>
       </thead>
       <tbody id="userTableBody">
